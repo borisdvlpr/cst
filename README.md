@@ -4,8 +4,6 @@
 
 CST is a lightweight, Debian-based container designed to continuously generate load and verify connectivity across various subsystems. It runs multiple parallel probes in the background to stress-test your container infrastructure.
 
-Redis runs **inside the container** and is managed by `supervisord`, which acts as PID 1 and keeps all processes alive automatically.
-
 ## Probes Included
 
 The container runs the following stress tests continuously:
@@ -15,6 +13,8 @@ The container runs the following stress tests continuously:
 - **File I/O**: Generates and deletes random files to test disk operations.
 - **CPU**: Computes heavy floating-point arithmetic loops using `bc`.
 - **DNS**: Continuously resolves target hostnames.
+
+Redis runs **inside the container** and is managed by `supervisord`, a process manager to run multiple services side-by-side within a single container. Supervisor acts as the container's main init process, simultaneously launching a local Redis server and the custom bash probes. This ensures that all testing components run reliably in parallel, with their logs aggregated and automatic restarts handled if any process unexpectedly crashes.
 
 ## Configuration
 
@@ -30,7 +30,7 @@ You can customize the stress test behavior by overriding these environment varia
 ## Repo Structure
 
 ```
-k8s-smoke-gauntlet/
+cst/
 ├── Dockerfile
 ├── supervisord.conf
 └── entrypoint.sh
